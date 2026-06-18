@@ -31,7 +31,7 @@ const client = new Client({
 const PREFIX = '-'; 
 const EMOJI_PREFIX = '!'; // بادئة أمر الايموجي
 
-const TOKEN = "process.env.TOKEN"; // توكن البوت الأساسي
+const TOKEN = process.env.TOKEN; // توكن البوت الأساسي
 const CLIENT_ID = "1516135003627454595";
 const GUILD_ID = "1515006381357531236";
 
