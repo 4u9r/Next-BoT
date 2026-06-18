@@ -141,7 +141,7 @@ client.on('interactionCreate', async (interaction) => {
                 .setColor('Purple')
                 .setDescription(
                     `\n\n` +
-                    `**CNX〢طلب منتج**\n` +
+                    `**ᴺˢ〢طلب منتج**\n` +
                     `**📍 الرجاء اضغط على الخيار في الاسفل**\n\n`
                 )
                 .setImage(TICKET_IMAGE_URL);
@@ -381,6 +381,14 @@ client.on('messageCreate', async (message) => {
     const args = message.content.slice(PREFIX.length).trim().split(/ +/);
     const cmd = args.shift().toLowerCase();
 
+    // 📣 أمر -رسالة (جديد)
+    if (cmd === 'رسالة') {
+        const textToSend = args.join(' ');
+        if (!textToSend) return message.reply("**❌ يرجى كتابة الرسالة التي تريد إرسالها**").then(m => setTimeout(() => m.delete(), 5000));
+        await message.delete().catch(() => {});
+        return message.channel.send({ content: textToSend });
+    }
+
     // 📣 أمر -say (موجود وشغال بالكامل باللون البنفسجي)
     if (cmd === 'say') {
         if (!message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
@@ -433,6 +441,7 @@ client.on('messageCreate', async (message) => {
     if (cmd === "help" || cmd === "hlep") {
         const helpMessage = 
           `**__ امر -say = امبيد ب الرساله الي انت تبيه\n\n` +
+          `-رسالة [النص] = إرسال رسالة عن طريق البوت مباشرة\n\n` +
           `-قوانين لـ عرض قوانين NEXT ~ ShOP\n\n` +
           `-أفتارات لـ عرض التفاصيل أسعار و كذا \n\n` +
           `-نداء [ منشن الشخص ]\n\n` +
