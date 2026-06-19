@@ -222,7 +222,7 @@ client.on('interactionCreate', async (interaction) => {
             // إغلاق التكت
             if (interaction.customId === 'close_ticket') {
                 const user = interaction.user;
-                await interaction.reply({ content: '**__سيتم اغلاق التكت بعد 5 ثواني ...<a:FG:1472545932234068068>__**' });
+                await interaction.reply({ content: '**__سيتم اغلاق التكت بعد 5 ثواني ...<a:dc1:1515853753649987699>__**' });
 
                 const transcript = await createTranscript(interaction.channel);
 
