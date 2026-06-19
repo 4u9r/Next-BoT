@@ -13,7 +13,8 @@ const {
     ChannelType,
     PermissionsBitField,
     REST,
-    Routes
+    Routes,
+    MessageFlags
 } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
 
@@ -197,7 +198,7 @@ client.on('interactionCreate', async (interaction) => {
                     `يمنع منعا باتا طلب ترجيع مبلغ في حال تم دفع ولكن يتم استرجاع المبلغ في الحالات الخاصه مثل عدم تنفيذ الطلب والخ فقط .\n\n\n` +
                     `ملاحظه مهمه تنفيذ طلبك في اقل من 24h اذا لايوجد ضغط علينا بشكل كبير .  \n\n` +
                     `From : Next Shop .\n__**`;
-                return interaction.reply({ content: textStore, flags: [4] });
+                return interaction.reply({ content: textStore, flags: [MessageFlags.Ephemeral] });
             }
 
             if (interaction.customId === 'rules_server') {
@@ -214,7 +215,7 @@ client.on('interactionCreate', async (interaction) => {
                     `10. في حال حدوث مشكلة تقنية من طرف المتجر، سيتم تقديم الحل المناسب.\n` +
                     `11. يتم تسليم المنتج بعد التأكد من وصول المبلغ كاملًا.\n` +
                     `12. الحفاظ على سرية بيانات الحسابات مسؤولية شخصية تقع على عاتق العميل نفسه.__**`;
-                return interaction.reply({ content: textServer, flags: [4] });
+                return interaction.reply({ content: textServer, flags: [MessageFlags.Ephemeral] });
             }
 
             // إغلاق التكت
@@ -246,7 +247,7 @@ client.on('interactionCreate', async (interaction) => {
         // 3. String Select Menu (إنشاء التكت تحت الكاتلوج المحددة مباشرة)
         if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_select') {
             const user = interaction.user;
-            await interaction.deferReply({ flags: [4] });
+            await interaction.deferReply({ flags: [MessageFlags.Ephemeral] });
 
             const channel = await interaction.guild.channels.create({
                 name: `ticket-${user.username}`.toLowerCase().replace(/[^a-z0-9-]/g, ''),
@@ -310,7 +311,7 @@ client.on('interactionCreate', async (interaction) => {
             if (!feedbackChannel) {
                 return interaction.reply({ 
                     content: '❌ خطأ: لم يتم العثور على الروم المخصص للآراء، يرجى مراجعة الإدارة.', 
-                    flags: [4] 
+                    flags: [MessageFlags.Ephemeral] 
                 });
             }
 
@@ -338,7 +339,7 @@ client.on('interactionCreate', async (interaction) => {
 
             await interaction.reply({ 
                 content: '**__✅ تم إرسال تقييمك بنجاح! .__**', 
-                flags: [4] 
+                flags: [MessageFlags.Ephemeral] 
             });
         }
 
