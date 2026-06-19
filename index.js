@@ -22,22 +22,18 @@ http.createServer((req, res) => {
 
 const PREFIX = '-'; 
 const EMOJI_PREFIX = '!'; 
-
 const TOKEN = process.env.TOKEN; 
 const CLIENT_ID = "1517124629272072232";
 const GUILD_ID = "1515006381357531236";
-
 const BUTTON_ROOM_ID = '1515024935603671071';   
 const FEEDBACK_ROOM_ID = '1515021789313368086'; 
 const LOG_CHANNEL_ID = "1516124616412893226";   
 const AFK_VC_ID = "1515731516175417354";        
-
 const TICKET_CATEGORY_ID = "1515024664328536155"; 
-
 const CUSTOM_EMOJI = '1516146900284211210'; 
 const BUTTON_EMOJI = '1515707612048654426';     
 
-const THUMB_URL = 'https://cdn.discordapp.com/attachments/1466089525934821448/1516252811535585329/0180FB26-A022-46EC-951F-E975A9FE5A59.png?ex=6a31f7f8&is=6a30a678&hm=3bcc3bfc7774cf220ca01639a7f57bf8d5f9e9e8088178b2d84c0f581437a073&';
+const THUMB_URL = 'https://cdn.discordapp.com/attachments/1466089525934821448/1516252811535585329/0180FB26-A022-46EC-951F-E975A9FE5A59.png';
 const LINE_URL = 'https://cdn.discordapp.com/attachments/1515778753438158898/1515779126081093704/885794064438538240.png'; 
 const TICKET_IMAGE_URL = "https://cdn.discordapp.com/attachments/1467179460930572483/1516104127996891316/0180FB26-A022-46EC-951F-E975A9FE5A59.png";
 
@@ -46,64 +42,40 @@ process.on('uncaughtException', console.error);
 
 const createFeedbackButtonRow = () => {
     return new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-            .setCustomId('open_feedback_modal')
-            .setLabel('رأيك')
-            .setStyle(ButtonStyle.Secondary)
-            .setEmoji(BUTTON_EMOJI)
+        new ButtonBuilder().setCustomId('open_feedback_modal').setLabel('رأيك').setStyle(ButtonStyle.Secondary).setEmoji(BUTTON_EMOJI)
     );
 };
 
 async function createTranscript(channel) {
-    let messages = [];
-    let lastId;
-
+    let messages = []; let lastId;
     while (true) {
       const fetched = await channel.messages.fetch({ limit: 100, before: lastId }).catch(() => null);
       if (!fetched || fetched.size === 0) break;
-
       messages.push(...fetched.values());
       lastId = fetched.last().id;
     }
-
     messages = messages.reverse();
     let text = `Transcript - ${channel.name}\n\n`;
-
-    for (const msg of messages) {
-      text += `[${msg.author.tag}] : ${msg.content || "[embed/attachment]"}\n`;
-    }
-
+    for (const msg of messages) { text += `[${msg.author.tag}] : ${msg.content || "[embed/attachment]"}\n`; }
     return text;
 }
 
 async function sendLog(guild, embed, file) {
     const channel = guild.channels.cache.get(LOG_CHANNEL_ID);
     if (!channel) return;
-
-    if (file) {
-      return channel.send({ embeds: [embed], files: [file] }).catch(() => null);
-    }
+    if (file) { return channel.send({ embeds: [embed], files: [file] }).catch(() => null); }
     channel.send({ embeds: [embed] }).catch(() => null);
 }
 
 client.once('ready', async () => {
     console.log(`✅ Logged in as ${client.user.tag}!`);
+    console.log(`✅ تم تشغيل البوت بنجاح ومدمج به كل الخصائص.`); 
     const rest = new REST({ version: '10' }).setToken(TOKEN);
     try {
-        await rest.put(
-            Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-            {
-                body: [
-                    {
-                        name: 'ticket',
-                        description: 'فتح التذاكر الخاص بالمتجر'
-                    }
-                ]
-            }
-        );
-    } catch (error) {
-        console.error("Error refreshing slash commands:", error);
-    }
+        await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
+            body: [{ name: 'ticket', description: 'فتح التذاكر الخاص بالمتجر' }]
+        });
+    } catch (error) { console.error(error); }
 });
 
 client.on('interactionCreate', async (interaction) => {
@@ -121,12 +93,6 @@ client.on('interactionCreate', async (interaction) => {
                 const modal = new ModalBuilder().setCustomId('feedback_modal_submit').setTitle('تقييم الخدمات والآراء');
                 modal.addComponents(new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('feedback_text_input').setLabel('اكتب رأيك أو تقييمك هنا:').setStyle(TextInputStyle.Paragraph).setRequired(true)));
                 return await interaction.showModal(modal);
-            }
-            if (interaction.customId === 'rules_store') {
-                return interaction.reply({ content: `**__~ قوانين Next Shop ~...__**`, flags: [MessageFlags.Ephemeral] });
-            }
-            if (interaction.customId === 'rules_server') {
-                return interaction.reply({ content: `**__قوانين وشروط المتجر...__**`, flags: [MessageFlags.Ephemeral] });
             }
             if (interaction.customId === 'close_ticket') {
                 const transcript = await createTranscript(interaction.channel);
@@ -155,7 +121,7 @@ client.on('interactionCreate', async (interaction) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    // الميزة التي طلبتها: تشغيل الخط عند إرسال "-"
+    // الميزة الأساسية للخط
     if (message.content === "-") {
         try {
             await message.delete().catch(() => {});
@@ -165,7 +131,7 @@ client.on('messageCreate', async (message) => {
         }
     }
 
-    // 🌟 1. أمر إرسال ايموجيات السيرفر (بالبادئة !)
+    // 🌟 أمر إرسال ايموجيات السيرفر
     if (message.content.startsWith(EMOJI_PREFIX)) {
         const args = message.content.slice(EMOJI_PREFIX.length).trim().split(/ +/);
         const command = args.shift().toLowerCase();
@@ -176,7 +142,7 @@ client.on('messageCreate', async (message) => {
                 return message.reply('❌ هذا السيرفر لا يحتوي على أي إيموجيات مخصصة.');
             }
 
-            await message.channel.send(`⏳ جاري إرسال عدد (${emojis.size}) إيموجي حبة حبة...`);
+            await message.channel.send(`⏳ جاري إرسال عدد (${emojis.size}) إيموجي...`);
 
             for (const [id, emoji] of emojis) {
                 try {
@@ -190,7 +156,7 @@ client.on('messageCreate', async (message) => {
         }
     }
 
-    // لجميع الأوامر الأخرى التي تستخدم البادئة (-)
+    // جميع الأوامر الأخرى ببادئة (-)
     if (!message.content.startsWith(PREFIX)) return;
     const args = message.content.slice(PREFIX.length).trim().split(/ +/);
     const cmd = args.shift().toLowerCase();
@@ -250,14 +216,14 @@ client.on('messageCreate', async (message) => {
     // ℹ️ أمر المساعدة -help
     if (cmd === "help" || cmd === "hlep") {
         const helpMessage = 
-          `**__ امر -say = امبيد ب الرساله الي انت تبيه\n\n` +
+          `**__ أمر -say = امبيد بالرسالة الي انت تبيها\n\n` +
           `-رسالة [النص] = إرسال رسالة عن طريق البوت مباشرة\n\n` +
           `-قوانين لـ عرض قوانين NEXT ~ ShOP\n\n` +
           `-أفتارات لـ عرض التفاصيل أسعار و كذا \n\n` +
           `-نداء [ منشن الشخص ]\n\n` +
           `-روم يدخل البوت روم AfK\n\n` +
           `-علامه تشغيل الحالة البنفسجية لـ البوت \n\n` +
-          `خط/- معروف ما يحتاج \n\n` +
+          `-خط معروف ما يحتاج \n\n` +
           `امر التكت بالسلاش\n\n` +
           `/ticket يرسل امر فتح التكت \n\n` +
           `لـ عرض قائمة الأوامر -hlep\n\n` +
@@ -328,4 +294,4 @@ client.on('messageCreate', async (message) => {
     }
 });
 
-client.login(process.env.TOKEN);
+client.login(‏process.env.TOKEN);
