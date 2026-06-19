@@ -1038,5 +1038,5 @@ content:LINE_URL
 
 
 // ================== LOGIN ==================
-
+console.log("Starting bot...");
 client.login(process.env.TOKEN);
