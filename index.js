@@ -567,4 +567,6 @@
 });
 
 // تشغيل البوت باستخدام التوكن الأساسي الخاص بك دون تعديل
+console.log("TOKEN:", process.env.TOKEN);
+client.login(process.env.TOKEN);
 ‏client.login(process.env.TOKEN);
